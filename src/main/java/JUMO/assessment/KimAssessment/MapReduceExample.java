@@ -38,17 +38,17 @@ public class MapReduceExample {
 		}
 	}
 
-	public static class LoanReducer extends Reducer<Text, IntWritable, Text, Text>{
+	public static class LoanReducer extends Reducer<Text, DoubleWritable, Text, Text>{
 
-		public void reduce(Text key, Iterable<IntWritable> values, Context context ) throws IOException, InterruptedException {
-			int total = 0;
+		public void reduce(Text key, Iterable<DoubleWritable> values, Context context ) throws IOException, InterruptedException {
+			double total = 0;
 			int count = 0;
 			// calculate the aggregate total and count for each tuple:
-			for (IntWritable val : values) {
+			for (DoubleWritable val : values) {
 				count++;
 				total += val.get();
 			}
-			String results="," + total + "," + count;		
+			String results=", " + total + ", " + count;		
 			context.write(key, new Text( results ));
 		}
 	}
@@ -61,7 +61,7 @@ public class MapReduceExample {
 		job.setMapperClass( LoanMapper.class);
 		job.setReducerClass( LoanReducer.class);
 		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(IntWritable.class);
+		job.setOutputValueClass(DoubleWritable.class);
 		Path path=new Path("Loans.csv");
 		FileInputFormat.addInputPath(job, path);
 		FileOutputFormat.setOutputPath(job, new Path("HadoopOutput"));
